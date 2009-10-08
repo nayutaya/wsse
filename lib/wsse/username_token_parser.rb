@@ -26,9 +26,8 @@ module Wsse
     end
 
     def self.parse_time(value)
-      return nil if value.to_s.empty?
       if /\A(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)Z\z/ =~ value.to_s
-        return Time.utc($1.to_i, $2.to_i, $3.to_i, $4.to_i, $5.to_i, $6.to_i)
+        return Time.utc(*($~.captures))
       else
         return nil
       end

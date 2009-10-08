@@ -16,7 +16,7 @@ class WsseUsernameTokenParserTest < Test::Unit::TestCase
       "Username"       => "test",
       "PasswordDigest" => "XYuMkeTAdwEwKhyU/4uw/pbvqrc=",
       "Nonce"          => "Mzg5ODU5MDExYTljODQ5Yg==",
-      "Created"        => "2009-10-08T02:31:57Z", # FIXME: str -> time
+      "Created"        => "2009-10-08T02:31:57Z",
     }
     assert_equal(expected, @mod.parse(value))
   end
@@ -28,7 +28,7 @@ class WsseUsernameTokenParserTest < Test::Unit::TestCase
       "Username"       => "hatena",
       "PasswordDigest" => "ZCNaK2jrXr4+zsCaYK/YLUxImZU=",
       "Nonce"          => "Uh95NQlviNpJQR1MmML+zq6pFxE=",
-      "Created"        => "2005-01-18T03:20:15Z", # FIXME: str -> time
+      "Created"        => "2005-01-18T03:20:15Z",
     }
     assert_equal(expected, @mod.parse(value))
   end
