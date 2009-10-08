@@ -52,4 +52,15 @@ class WsseUsernameTokenParserTest < Test::Unit::TestCase
   def test_parse__empty
     assert_equal(nil, @mod.parse(""))
   end
+
+  def test_parse_time
+    assert_equal(Time.utc(2009,  1,  1,  0,  0,  0), @mod.parse_time("2009-01-01T00:00:00Z"))
+    assert_equal(Time.utc(2009, 12, 31, 23, 59, 59), @mod.parse_time("2009-12-31T23:59:59Z"))
+    assert_equal(Time.utc(2001,  2,  3,  4,  5,  6), @mod.parse_time("2001-02-03T04:05:06Z"))
+  end
+
+  def test_parse_time__empty
+    assert_equal(nil, @mod.parse_time(nil))
+    assert_equal(nil, @mod.parse_time(""))
+  end
 end
