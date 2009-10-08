@@ -33,6 +33,18 @@ class WsseUsernameTokenParserTest < Test::Unit::TestCase
     assert_equal(expected, @mod.parse(value))
   end
 
+  def test_parse__3
+    # http://www.witha.jp/blog/archives/2004/06/_atom_api.html
+    value = %|UsernameToken Username="Melody", PasswordDigest="VfJavTaTy3BhKkeY/WVu9L6cdVA=", Created="2004-01-20T01:09:39Z", Nonce="7c19aeed85b93d35ba42e357f10ca19bf314d622"|
+    expected = {
+      "Username"       => "Melody",
+      "PasswordDigest" => "VfJavTaTy3BhKkeY/WVu9L6cdVA=",
+      "Nonce"          => "7c19aeed85b93d35ba42e357f10ca19bf314d622",
+      "Created"        => "2004-01-20T01:09:39Z",
+    }
+    assert_equal(expected, @mod.parse(value))
+  end
+
   def test_parse__nil
     assert_equal(nil, @mod.parse(nil))
   end
