@@ -24,5 +24,14 @@ module Wsse
         "Created"        => created,
       }
     end
+
+    def self.format_wsse(params)
+      return format(
+        %|UsernameToken Username="%s", PasswordDigest="%s", Nonce="%s", Created="%s"|,
+        (params["Username"]       || raise(ArgumentError)),
+        (params["PasswordDigest"] || raise(ArgumentError)),
+        (params["Nonce"]          || raise(ArgumentError)),
+        (params["Created"]        || raise(ArgumentError)))
+    end
   end
 end

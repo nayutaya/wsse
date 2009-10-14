@@ -71,4 +71,20 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
       assert_equal(expected, @mod.create_wsse_params(username, password))
     }
   end
+
+  def test_format_wsse
+    basic = {
+      "Username"       => "username",
+      "PasswordDigest" => "digest",
+      "Nonce"          => "nonce",
+      "Created"        => "created",
+    }
+    assert_equal(
+      %|UsernameToken Username="username", PasswordDigest="digest", Nonce="nonce", Created="created"|,
+      @mod.format_wsse(basic))
+    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Username"       => nil)) }
+    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("PasswordDigest" => nil)) }
+    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Nonce"          => nil)) }
+    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Created"        => nil)) }
+  end
 end
