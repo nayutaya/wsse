@@ -23,7 +23,7 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     assert_equal(10, 10.times.map { @mod.create_nonce }.uniq.size)
   end
 
-  def test_create_wsse_params
+  def test_create_token_params
     username = "username"
     password = "password"
     nonce    = "nonce"
@@ -34,10 +34,10 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
       "Nonce"          => [nonce].pack("m").chomp,
       "Created"        => created,
     }
-    assert_equal(expected, @mod.create_wsse_params(username, password, nonce, created))
+    assert_equal(expected, @mod.create_token_params(username, password, nonce, created))
   end
 
-  def test_create_wsse_params__default_created
+  def test_create_token_params__default_created
     username = "username1"
     password = "password1"
     nonce    = "nonce"
@@ -50,11 +50,11 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     }
     @musha.defs(:create_created_time) { created }
     @musha.swap {
-      assert_equal(expected, @mod.create_wsse_params(username, password, nonce))
+      assert_equal(expected, @mod.create_token_params(username, password, nonce))
     }
   end
 
-  def test_create_wsse_params__default_nonce
+  def test_create_token_params__default_nonce
     username = "username2"
     password = "password2"
     nonce    = "foobarbaz"
@@ -68,11 +68,11 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     @musha.defs(:create_nonce) { nonce }
     @musha.defs(:create_created_time) { created }
     @musha.swap {
-      assert_equal(expected, @mod.create_wsse_params(username, password))
+      assert_equal(expected, @mod.create_token_params(username, password))
     }
   end
 
-  def test_format_wsse
+  def test_format_token
     basic = {
       "Username"       => "username",
       "PasswordDigest" => "digest",
@@ -81,10 +81,10 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     }
     assert_equal(
       %|UsernameToken Username="username", PasswordDigest="digest", Nonce="nonce", Created="created"|,
-      @mod.format_wsse(basic))
-    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Username"       => nil)) }
-    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("PasswordDigest" => nil)) }
-    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Nonce"          => nil)) }
-    assert_raise(ArgumentError) { @mod.format_wsse(basic.merge("Created"        => nil)) }
+      @mod.format_token(basic))
+    assert_raise(ArgumentError) { @mod.format_token(basic.merge("Username"       => nil)) }
+    assert_raise(ArgumentError) { @mod.format_token(basic.merge("PasswordDigest" => nil)) }
+    assert_raise(ArgumentError) { @mod.format_token(basic.merge("Nonce"          => nil)) }
+    assert_raise(ArgumentError) { @mod.format_token(basic.merge("Created"        => nil)) }
   end
 end
