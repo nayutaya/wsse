@@ -33,5 +33,10 @@ module Wsse
         (params["Nonce"]          || raise(ArgumentError)),
         (params["Created"]        || raise(ArgumentError)))
     end
+
+    def self.create_token(username, password, nonce = nil, created = nil)
+      params = self.create_token_params(username, password, nonce, created)
+      return self.format_token(params)
+    end
   end
 end

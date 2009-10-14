@@ -87,4 +87,29 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { @mod.format_token(basic.merge("Nonce"          => nil)) }
     assert_raise(ArgumentError) { @mod.format_token(basic.merge("Created"        => nil)) }
   end
+
+  def test_create_token
+    assert_equal(
+      %|UsernameToken Username="username", PasswordDigest="DzunnEf/2CKuhInsnmEHonW5qQs=", Nonce="bm9uY2U=", Created="2000-01-01T00:00:00Z"|,
+      @mod.create_token("username", "password", "nonce", "2000-01-01T00:00:00Z"))
+  end
+
+  def test_create_token__default_created
+    @musha.defs(:create_created_time) { "2001-02-03T04:05:06Z" }
+    @musha.swap {
+      assert_equal(
+        %|UsernameToken Username="username1", PasswordDigest="lTTtMZC0IJyrV8aITFjLgdDzXzw=", Nonce="bm9uY2U=", Created="2001-02-03T04:05:06Z"|,
+        @mod.create_token("username1", "password1", "nonce"))
+    }
+  end
+
+  def test_create_token__default_nonce
+    @musha.defs(:create_nonce) { "foobarbaz" }
+    @musha.defs(:create_created_time) { "2001-02-03T04:05:06Z" }
+    @musha.swap {
+      assert_equal(
+        %|UsernameToken Username="username2", PasswordDigest="zmw1lW05c8tDlXsnU1IypUIt8uA=", Nonce="Zm9vYmFyYmF6", Created="2001-02-03T04:05:06Z"|,
+        @mod.create_token("username2", "password2"))
+    }
+  end
 end
