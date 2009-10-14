@@ -2,6 +2,8 @@
 
 require "test/unit"
 require "rubygems"
+require "kagemusha"
+require "kagemusha/datetime"
 
 begin
   require "redgreen"
