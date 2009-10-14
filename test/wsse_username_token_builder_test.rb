@@ -6,19 +6,14 @@ require "wsse/username_token_builder"
 class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
   def setup
     @mod = Wsse::UsernameTokenBuilder
+    @musha = Kagemusha.new(@mod)
   end
 
   def test_create_created_time
-    assert_equal(
-      "2000-01-01T00:00:00Z",
-      @mod.create_created_time(Time.utc(2000, 1, 1, 0, 0, 0)))
-    assert_equal(
-      "2001-12-31T23:59:59Z",
-      @mod.create_created_time(Time.utc(2001, 12, 31, 23, 59, 59)))
+    assert_equal("2000-01-01T00:00:00Z", @mod.create_created_time(Time.utc(2000, 1, 1, 0, 0, 0)))
+    assert_equal("2001-12-31T23:59:59Z", @mod.create_created_time(Time.utc(2001, 12, 31, 23, 59, 59)))
     Kagemusha::DateTime.at(Time.utc(2009, 1, 2, 3, 4, 5)) {
-      assert_equal(
-        "2009-01-02T03:04:05Z",
-        @mod.create_created_time())
+      assert_equal("2009-01-02T03:04:05Z", @mod.create_created_time())
     }
   end
 
@@ -29,47 +24,51 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
   end
 
   def test_create_wsse_params
+    username = "username"
+    password = "password"
+    nonce    = "nonce"
+    created  = "2000-01-01T00:00:00Z"
     expected = {
-      "Username"       => "username",
-      "PasswordDigest" => [Digest::SHA1.digest("nonce2000-01-01T00:00:00Zpassword")].pack("m").chomp,
-      "Nonce"          => ["nonce"].pack("m").chomp,
-      "Created"        => "2000-01-01T00:00:00Z",
+      "Username"       => username,
+      "PasswordDigest" => [Digest::SHA1.digest("#{nonce}#{created}#{password}")].pack("m").chomp,
+      "Nonce"          => [nonce].pack("m").chomp,
+      "Created"        => created,
     }
-    assert_equal(
-      expected,
-      @mod.create_wsse_params("username", "password", "nonce", "2000-01-01T00:00:00Z"))
+    assert_equal(expected, @mod.create_wsse_params(username, password, nonce, created))
   end
 
   def test_create_wsse_params__default_created
+    username = "username1"
+    password = "password1"
+    nonce    = "nonce"
+    created  = "2001-02-03T04:05:06Z"
     expected = {
-      "Username"       => "username1",
-      "PasswordDigest" => [Digest::SHA1.digest("nonce2001-02-03T04:05:06Zpassword1")].pack("m").chomp,
-      "Nonce"          => ["nonce"].pack("m").chomp,
-      "Created"        => "2001-02-03T04:05:06Z",
+      "Username"       => username,
+      "PasswordDigest" => [Digest::SHA1.digest("#{nonce}#{created}#{password}")].pack("m").chomp,
+      "Nonce"          => [nonce].pack("m").chomp,
+      "Created"        => created,
     }
-    musha = Kagemusha.new(@mod)
-    musha.defs(:create_created_time) { "2001-02-03T04:05:06Z" }
-    musha.swap {
-      assert_equal(
-        expected,
-        @mod.create_wsse_params("username1", "password1", "nonce"))
+    @musha.defs(:create_created_time) { created }
+    @musha.swap {
+      assert_equal(expected, @mod.create_wsse_params(username, password, nonce))
     }
   end
 
   def test_create_wsse_params__default_nonce
+    username = "username2"
+    password = "password2"
+    nonce    = "foobarbaz"
+    created  = "2001-02-03T04:05:06Z"
     expected = {
-      "Username"       => "username2",
-      "PasswordDigest" => [Digest::SHA1.digest("foobarbaz2001-02-03T04:05:06Zpassword2")].pack("m").chomp,
-      "Nonce"          => ["foobarbaz"].pack("m").chomp,
-      "Created"        => "2001-02-03T04:05:06Z",
+      "Username"       => username,
+      "PasswordDigest" => [Digest::SHA1.digest("#{nonce}#{created}#{password}")].pack("m").chomp,
+      "Nonce"          => [nonce].pack("m").chomp,
+      "Created"        => created,
     }
-    musha = Kagemusha.new(@mod)
-    musha.defs(:create_nonce) { "foobarbaz" }
-    musha.defs(:create_created_time) { "2001-02-03T04:05:06Z" }
-    musha.swap {
-      assert_equal(
-        expected,
-        @mod.create_wsse_params("username2", "password2"))
+    @musha.defs(:create_nonce) { nonce }
+    @musha.defs(:create_created_time) { created }
+    @musha.swap {
+      assert_equal(expected, @mod.create_wsse_params(username, password))
     }
   end
 end
