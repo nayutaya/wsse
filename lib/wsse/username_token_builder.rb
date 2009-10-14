@@ -13,7 +13,9 @@ module Wsse
       return 20.times.map { rand(256) }.pack("C*")
     end
 
-    def self.create_wsse_params(username, password, nonce, created)
+    def self.create_wsse_params(username, password, nonce = nil, created = nil)
+      nonce   ||= self.create_nonce
+      created ||= self.create_created_time
       digest = Digest::SHA1.digest(nonce + created + password)
       return {
         "Username"       => username,
