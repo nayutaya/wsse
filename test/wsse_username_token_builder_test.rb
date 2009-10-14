@@ -27,4 +27,16 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     assert_equal(20, @mod.create_nonce.size)
     assert_equal(10, 10.times.map { @mod.create_nonce }.uniq.size)
   end
+
+  def test_create_wsse_params
+    expected = {
+      "Username"       => "username",
+      "PasswordDigest" => "DzunnEf/2CKuhInsnmEHonW5qQs=",
+      "Nonce"          => "bm9uY2U=",
+      "Created"        => "2000-01-01T00:00:00Z",
+    }
+    assert_equal(
+      expected,
+      @mod.create_wsse_params("username", "password", "nonce", "2000-01-01T00:00:00Z"))
+  end
 end
