@@ -22,7 +22,9 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     }
   end
 
-  def test_true
-    assert true
+  def test_create_nonce
+    srand(0)
+    assert_equal(20, @mod.create_nonce.size)
+    assert_equal(10, 10.times.map { @mod.create_nonce }.uniq.size)
   end
 end
