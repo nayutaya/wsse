@@ -17,7 +17,7 @@ module Wsse
     end
 
     def parse_token(token)
-      return UsernameTokenParser.parse(token)
+      return UsernameTokenParser.parse_token(token)
     end
   end
 end

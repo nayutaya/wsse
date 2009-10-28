@@ -20,26 +20,26 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     assert_equal("b", header.password)
   end
 
-  def test_create_header
+  def test_create_token
     header = @klass.new("username", "password")
     assert_equal(
       Wsse::UsernameTokenBuilder.create_token("username", "password", "nonce", "2009-01-01T00:00:00"),
       header.create_token("nonce", "2009-01-01T00:00:00"))
   end
 
-  def test_create_header__default_created
+  def test_create_token__default_created
     header = @klass.new("username", "password")
     token  = header.create_token("nonce")
-    params = Wsse::UsernameTokenParser.parse(token)
+    params = Wsse::UsernameTokenParser.parse_token(token)
     assert_equal(
       %w[Username Nonce PasswordDigest Created].sort,
       params.keys.sort)
   end
 
-  def test_create_header__default_nonce
+  def test_create_token__default_nonce
     header = @klass.new("username", "password")
     token  = header.create_token
-    params = Wsse::UsernameTokenParser.parse(token)
+    params = Wsse::UsernameTokenParser.parse_token(token)
     assert_equal(
       %w[Username Nonce PasswordDigest Created].sort,
       params.keys.sort)

@@ -2,8 +2,8 @@
 
 module Wsse
   module UsernameTokenParser
-    def self.parse(value)
-      if /\AUsernameToken (.+?=".+?"(?:, .+?=".+?")*)\z/ =~ value.to_s
+    def self.parse_token(token)
+      if /\AUsernameToken (.+?=".+?"(?:, .+?=".+?")*)\z/ =~ token.to_s
         return $1.scan(/(?:\A|, )(.+?)="(.+?)"/).inject({}) { |memo, (key, value)|
           memo[key] = value
           memo
