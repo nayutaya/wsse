@@ -57,4 +57,14 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     }
     assert_equal(expected, header.parse_token(token))
   end
+
+  def test_match_username?
+    header1 = @klass.new("username", "password")
+    assert_equal(true,  header1.match_username?("Username" => "username"))
+    assert_equal(false, header1.match_username?("Username" => "USERNAME"))
+
+    header2 = @klass.new("foo", "bar")
+    assert_equal(true,  header2.match_username?("Username" => "foo"))
+    assert_equal(false, header2.match_username?("Username" => nil))
+  end
 end

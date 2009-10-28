@@ -19,5 +19,9 @@ module Wsse
     def parse_token(token)
       return UsernameTokenParser.parse_token(token)
     end
+
+    def match_username?(params)
+      return (@username == params["Username"])
+    end
   end
 end
