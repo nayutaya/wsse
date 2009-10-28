@@ -20,7 +20,7 @@ module Wsse
     def self.create_token_params(username, password, nonce = nil, created = nil)
       nonce   ||= self.create_nonce(20)
       created ||= self.create_created_time
-      digest = Digest::SHA1.digest(nonce + created + password)
+      digest = self.create_password_digest(password, nonce, created)
       return {
         "Username"       => username,
         "PasswordDigest" => [digest].pack("m").chomp,
