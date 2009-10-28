@@ -2,7 +2,6 @@
 
 require File.dirname(__FILE__) + "/test_helper"
 require "wsse/http_header"
-require "wsse/username_token_parser"
 
 class WsseHttpHeaderTest < Test::Unit::TestCase
   def setup
@@ -44,5 +43,18 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     assert_equal(
       %w[Username Nonce PasswordDigest Created].sort,
       params.keys.sort)
+  end
+
+  def test_parse_token
+    token = Wsse::UsernameTokenBuilder.create_token("foo", "bar", "baz", "2000-01-01T00:00:00")
+
+    header = @klass.new("username", "password")
+    expected = {
+      "Username"       => "foo",
+      "PasswordDigest" => "qzlKm7PqSP1MPDHUJXz5yhb0ECg=",
+      "Nonce"          => "YmF6",
+      "Created"        => "2000-01-01T00:00:00",
+    }
+    assert_equal(expected, header.parse_token(token))
   end
 end
