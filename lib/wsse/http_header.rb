@@ -21,13 +21,14 @@ module Wsse
     end
 
     def match_username?(params)
-      return (@username == params["Username"])
+      username = (params["Username"] || raise(ArgumentError))
+      return (@username == username)
     end
 
     def match_password?(params)
-      digest  = params["PasswordDigest"].unpack("m")[0]
-      nonce   = params["Nonce"].unpack("m")[0]
-      created = params["Created"]
+      digest  = (params["PasswordDigest"] || raise(ArgumentError)).unpack("m")[0]
+      nonce   = (params["Nonce"]          || raise(ArgumentError)).unpack("m")[0]
+      created = (params["Created"]        || raise(ArgumentError))
 
       digest2 = UsernameTokenBuilder.create_password_digest(@password, nonce, created)
 
