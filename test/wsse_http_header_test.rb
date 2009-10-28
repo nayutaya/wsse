@@ -72,7 +72,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
   end
 
   def test_match_password
-    params1 = Wsse::UsernameTokenBuilder.create_token_params(@basic.username, @basic.password, "nonce", "2000-01-01T00:00:00")
+    params1 = Wsse::UsernameTokenBuilder.create_token_params("username", "password", "nonce", "2000-01-01T00:00:00")
     params2 = Wsse::UsernameTokenBuilder.create_token_params("foo", "bar", "baz", "2000-12-31T23:59:59")
     assert_equal(true,  @basic.match_password?(params1))
     assert_equal(false, @basic.match_password?(params1.merge("PasswordDigest" => params2["PasswordDigest"])))
@@ -85,5 +85,25 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     assert_raise(ArgumentError) { @basic.match_password?(params.merge("PasswordDigest" => nil)) }
     assert_raise(ArgumentError) { @basic.match_password?(params.merge("Nonce"          => nil)) }
     assert_raise(ArgumentError) { @basic.match_password?(params.merge("Created"        => nil)) }
+  end
+
+  def test_authenticate__success
+    token = Wsse::UsernameTokenBuilder.create_token("username", "password")
+    assert_equal(:success, @basic.authenticate(token))
+  end
+
+  def test_authenticate__invalid_token
+    token = "token"
+    assert_equal(:invalid_token, @basic.authenticate(token))
+  end
+
+  def test_authenticate__wrong_username
+    token = Wsse::UsernameTokenBuilder.create_token("foo", "password")
+    assert_equal(:wrong_username, @basic.authenticate(token))
+  end
+
+  def test_authenticate__wrong_password
+    token = Wsse::UsernameTokenBuilder.create_token("username", "bar")
+    assert_equal(:wrong_password, @basic.authenticate(token))
   end
 end

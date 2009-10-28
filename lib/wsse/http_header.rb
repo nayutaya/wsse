@@ -34,5 +34,13 @@ module Wsse
 
       return (digest == digest2)
     end
+
+    def authenticate(token)
+      params = self.parse_token(token)
+      return :invalid_token  if params.nil?
+      return :wrong_username unless self.match_username?(params)
+      return :wrong_password unless self.match_password?(params)
+      return :success
+    end
   end
 end
