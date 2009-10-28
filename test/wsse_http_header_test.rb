@@ -24,7 +24,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
   def test_create_token
     header = @basic
     assert_equal(
-      Wsse::UsernameTokenBuilder.create_token(header.username, header.password, "nonce", "2009-01-01T00:00:00"),
+      create_token(header.username, header.password, "nonce", "2009-01-01T00:00:00"),
       header.create_token("nonce", "2009-01-01T00:00:00"))
   end
 
@@ -48,7 +48,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
 
   def test_parse_token
     header = @basic
-    token  = Wsse::UsernameTokenBuilder.create_token("foo", "bar", "baz", "2000-01-01T00:00:00")
+    token  = create_token("foo", "bar", "baz", "2000-01-01T00:00:00")
 
     expected = {
       "Username"       => "foo",
@@ -98,7 +98,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
 
   def test_authenticate__success
     header = @basic
-    token  = Wsse::UsernameTokenBuilder.create_token("username", "password")
+    token  = create_token("username", "password")
     assert_equal(:success, header.authenticate(token))
   end
 
@@ -110,13 +110,13 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
 
   def test_authenticate__wrong_username
     header = @basic
-    token  = Wsse::UsernameTokenBuilder.create_token("foo", "password")
+    token  = create_token("foo", "password")
     assert_equal(:wrong_username, header.authenticate(token))
   end
 
   def test_authenticate__wrong_password
     header = @basic
-    token  = Wsse::UsernameTokenBuilder.create_token("username", "bar")
+    token  = create_token("username", "bar")
     assert_equal(:wrong_password, header.authenticate(token))
   end
 
@@ -130,7 +130,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
 
   private
 
-  def create_token(username, password)
-    return Wsse::UsernameTokenBuilder.create_token(username, password)
+  def create_token(username, password, nonce = nil, created = nil)
+    return Wsse::UsernameTokenBuilder.create_token(username, password, nonce, created)
   end
 end
