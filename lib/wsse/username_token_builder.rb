@@ -13,7 +13,9 @@ module Wsse
       return size.times.map { rand(256) }.pack("C*")
     end
 
-    # FIXME: create_password_digestメソッドを追加
+    def self.create_password_digest(password, nonce, created)
+      return Digest::SHA1.digest(nonce + created + password)
+    end
 
     def self.create_token_params(username, password, nonce = nil, created = nil)
       nonce   ||= self.create_nonce(20)
