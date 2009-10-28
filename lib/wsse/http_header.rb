@@ -35,12 +35,18 @@ module Wsse
       return (digest == digest2)
     end
 
+    # FIXME: リピート攻撃に対処
+    # FIXME: Createdの範囲を制限
     def authenticate(token)
       params = self.parse_token(token)
       return :invalid_token  if params.nil?
       return :wrong_username unless self.match_username?(params)
       return :wrong_password unless self.match_password?(params)
       return :success
+    end
+
+    def authenticate?(token)
+      return (self.authenticate(token) == :success)
     end
   end
 end

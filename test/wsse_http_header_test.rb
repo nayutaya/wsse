@@ -104,7 +104,7 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
 
   def test_authenticate__invalid_token
     header = @basic
-    token  = "token"
+    token  = "invalid-token"
     assert_equal(:invalid_token, header.authenticate(token))
   end
 
@@ -118,5 +118,19 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     header = @basic
     token  = Wsse::UsernameTokenBuilder.create_token("username", "bar")
     assert_equal(:wrong_password, header.authenticate(token))
+  end
+
+  def test_authenticate_p
+    header = @basic
+    assert_equal(true,  header.authenticate?(create_token("username", "password")))
+    assert_equal(false, header.authenticate?("invalid-token"))
+    assert_equal(false, header.authenticate?(create_token("foo", "password")))
+    assert_equal(false, header.authenticate?(create_token("username", "bar")))
+  end
+
+  private
+
+  def create_token(username, password)
+    return Wsse::UsernameTokenBuilder.create_token(username, password)
   end
 end
