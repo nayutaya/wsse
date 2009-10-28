@@ -16,6 +16,10 @@ module Wsse
       return UsernameTokenBuilder.create_token(@username, @password, nonce, created)
     end
 
+    def create_header_hash(nonce = nil, created = nil)
+      return {"X-WSSE" => self.create_token(nonce, created)}
+    end
+
     def parse_token(token)
       return UsernameTokenParser.parse_token(token)
     end

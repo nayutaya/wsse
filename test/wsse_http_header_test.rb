@@ -46,6 +46,20 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
       params.keys.sort)
   end
 
+  def test_create_header_hash
+    header = @basic
+    token  = header.create_token("nonce", "2009-01-01T00:00:00")
+    assert_equal(
+      {"X-WSSE" => token},
+      header.create_header_hash("nonce", "2009-01-01T00:00:00"))
+  end
+
+  def test_create_header_hash__default_values
+    header = @basic
+    hash   = header.create_header_hash
+    assert_equal(["X-WSSE"], hash.keys)
+  end
+
   def test_parse_token
     header = @basic
     token  = create_token("foo", "bar", "baz", "2000-01-01T00:00:00")
