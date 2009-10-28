@@ -9,15 +9,14 @@ module Wsse
       return time.utc.iso8601
     end
 
-    # FIXME: サイズを指定できるように変更
-    def self.create_nonce
-      return 20.times.map { rand(256) }.pack("C*")
+    def self.create_nonce(size)
+      return size.times.map { rand(256) }.pack("C*")
     end
 
     # FIXME: create_password_digestメソッドを追加
 
     def self.create_token_params(username, password, nonce = nil, created = nil)
-      nonce   ||= self.create_nonce
+      nonce   ||= self.create_nonce(20)
       created ||= self.create_created_time
       digest = Digest::SHA1.digest(nonce + created + password)
       return {
