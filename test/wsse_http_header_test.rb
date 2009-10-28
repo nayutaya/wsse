@@ -64,4 +64,13 @@ class WsseHttpHeaderTest < Test::Unit::TestCase
     assert_equal(true,  header.match_username?("Username" => "foo"))
     assert_equal(false, header.match_username?("Username" => nil))
   end
+
+  def test_match_password__1
+    params1 = Wsse::UsernameTokenBuilder.create_token_params(@basic.username, @basic.password, "nonce", "2000-01-01T00:00:00")
+    params2 = Wsse::UsernameTokenBuilder.create_token_params("foo", "bar", "baz", "2000-12-31T23:59:59")
+    assert_equal(true,  @basic.match_password?(params1))
+    assert_equal(false, @basic.match_password?(params1.merge("PasswordDigest" => params2["PasswordDigest"])))
+    assert_equal(false, @basic.match_password?(params1.merge("Nonce" => params2["Nonce"])))
+    assert_equal(false, @basic.match_password?(params1.merge("Created" => params2["Created"])))
+  end
 end
