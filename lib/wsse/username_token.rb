@@ -56,11 +56,19 @@ module Wsse
 
     def self.parse(token)
       parsed_token = self.parse_token(token)
+      return nil unless parsed_token
+
       username = parsed_token["Username"]
-      digest   = parsed_token["PasswordDigest"].unpack("m")[0]
-      nonce    = parsed_token["Nonce"].unpack("m")[0]
-      created  = self.parse_time(parsed_token["Created"])
-      return self.new(username, digest, nonce, created)
+      digest   = parsed_token["PasswordDigest"]
+      nonce    = parsed_token["Nonce"]
+      created  = parsed_token["Created"]
+      return nil if [username, digest, nonce, created].include?(nil)
+
+      return self.new(
+        username,
+        digest.unpack("m")[0],
+        nonce.unpack("m")[0],
+        self.parse_time(created))
     end
 
     def base64encoded_digest
