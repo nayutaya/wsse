@@ -17,22 +17,6 @@ class WsseUsernameTokenBuilderTest < Test::Unit::TestCase
     }
   end
 
-  def test_create_nonce
-    srand(0)
-    assert_equal(20, @mod.create_nonce(20).size)
-    assert_equal(30, @mod.create_nonce(30).size)
-    assert_equal(10, 10.times.map { @mod.create_nonce(20) }.uniq.size)
-  end
-
-  def test_create_password_digest
-    assert_equal(
-      Digest::SHA1.digest("noncecreatedpassword"),
-      @mod.create_password_digest("password", "nonce", "created"))
-    assert_equal(
-      Digest::SHA1.digest("231"),
-      @mod.create_password_digest("1", "2", "3"))
-  end
-
   def test_create_token_params
     username = "username"
     password = "password"
