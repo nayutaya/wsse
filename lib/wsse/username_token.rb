@@ -86,8 +86,5 @@ module Wsse
         self.base64encoded_nonce,
         self.created.utc.iso8601)
     end
-
-    # TODO: self.parse(token) -> UsernameToken
-    # TODO: self.parse_time(time) -> Time
   end
 end
