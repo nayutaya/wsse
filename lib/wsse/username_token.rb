@@ -22,9 +22,9 @@ module Wsse
       return Digest::SHA1.digest(nonce + created.utc.iso8601 + password)
     end
 
-    def self.build(username, password, nonce, created)
-      # TODO: nonce‚Ì¶¬
-      # TODO: created‚Ì¶¬
+    def self.build(username, password, nonce = nil, created = nil)
+      nonce   ||= self.create_random_binary(20)
+      created ||= Time.now.utc
       digest = self.create_password_digest(password, nonce, created)
       return self.new(username, digest, nonce, created)
     end
@@ -51,11 +51,7 @@ module Wsse
         self.created.utc.iso8601)
     end
 
-    # TODO: self.format_token(username, digest, nonce, created) -> str
     # TODO: self.parse(token) -> UsernameToken
     # TODO: self.parse_time(time) -> Time
-    # TODO: formatted_created -> str
-    # TODO: create_token_params -> Hash
-    # TODO: create_token -> Hash
   end
 end

@@ -6,6 +6,7 @@ require "wsse/username_token"
 class WsseUsernameTokenTest < Test::Unit::TestCase
   def setup
     @klass = Wsse::UsernameToken
+    @musha = Kagemusha.new(@klass)
   end
 
   def test_initialize_and_accessor
@@ -43,6 +44,33 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
     assert_equal("nonce",    token.nonce)
     assert_equal(created,    token.created)
   end
+
+  def test_build__default_created
+    created = Time.utc(1999, 12, 31, 23, 59, 59)
+
+    token =
+      Kagemusha::DateTime.at(created) {
+        @klass.build("username", "password", "nonce")
+      }
+
+    assert_equal(created, token.created)
+  end
+
+  def test_build__default_nonce
+    nonce = "foo"
+
+    @musha.defs(:create_random_binary) { |size|
+      raise unless size == 20
+      nonce
+    }
+    token =
+      @musha.swap {
+        @klass.build("username", "password")
+      }
+
+    assert_equal(nonce, token.nonce)
+  end
+
 
   def test_format_token_values
     assert_equal(
