@@ -124,6 +124,24 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
     assert_equal(nil, @klass.parse_time(""))
   end
 
+  def test_parse__1
+    token = @klass.parse(%|UsernameToken Username="username", PasswordDigest="ZGlnZXN0", Nonce="bm9uY2U=", Created="2000-01-01T00:00:00Z"|)
+    assert_kind_of(@klass, token)
+    assert_equal("username", token.username)
+    assert_equal("digest",   token.digest)
+    assert_equal("nonce",    token.nonce)
+    assert_equal(Time.utc(2000, 1, 1), token.created)
+  end
+
+  def test_parse__2
+    token = @klass.parse(%|UsernameToken Username="foo", PasswordDigest="YmFy", Nonce="YmF6", Created="1999-12-31T23:59:59Z"|)
+    assert_kind_of(@klass, token)
+    assert_equal("foo", token.username)
+    assert_equal("bar", token.digest)
+    assert_equal("baz", token.nonce)
+    assert_equal(Time.utc(1999, 12, 31, 23, 59, 59), token.created)
+  end
+
   def test_format_token_values
     assert_equal(
       %|UsernameToken Username="a", PasswordDigest="b", Nonce="c", Created="d"|,

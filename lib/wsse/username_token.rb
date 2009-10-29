@@ -54,6 +54,15 @@ module Wsse
         username, digest, nonce, created)
     end
 
+    def self.parse(token)
+      parsed_token = self.parse_token(token)
+      username = parsed_token["Username"]
+      digest   = parsed_token["PasswordDigest"].unpack("m")[0]
+      nonce    = parsed_token["Nonce"].unpack("m")[0]
+      created  = self.parse_time(parsed_token["Created"])
+      return self.new(username, digest, nonce, created)
+    end
+
     def base64encoded_digest
       return [@digest].pack("m").chomp
     end
