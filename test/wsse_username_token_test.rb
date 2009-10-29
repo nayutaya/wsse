@@ -44,6 +44,12 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
     assert_equal(created,    token.created)
   end
 
+  def test_format_token_values
+    assert_equal(
+      %|UsernameToken Username="a", PasswordDigest="b", Nonce="c", Created="d"|,
+      @klass.format_token_values("a", "b", "c", "d"))
+  end
+
   def test_base64encoded_digest
     token = @klass.new("username", "digest", "nonce", Time.utc(2000, 1, 1))
     assert_equal("ZGlnZXN0", token.base64encoded_digest)
@@ -52,5 +58,12 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
   def test_base64encoded_nonce
     token = @klass.new("username", "digest", "nonce", Time.utc(2000, 1, 1))
     assert_equal("bm9uY2U=", token.base64encoded_nonce)
+  end
+
+  def test_format
+    token = @klass.build("username", "password", "nonce", Time.utc(2000, 1, 1))
+    assert_equal(
+      %|UsernameToken Username="username", PasswordDigest="DzunnEf/2CKuhInsnmEHonW5qQs=", Nonce="bm9uY2U=", Created="2000-01-01T00:00:00Z"|,
+      token.format)
   end
 end

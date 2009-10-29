@@ -23,8 +23,16 @@ module Wsse
     end
 
     def self.build(username, password, nonce, created)
+      # TODO: nonce‚Ì¶¬
+      # TODO: created‚Ì¶¬
       digest = self.create_password_digest(password, nonce, created)
       return self.new(username, digest, nonce, created)
+    end
+
+    def self.format_token_values(username, digest, nonce, created)
+      return format(
+        %|UsernameToken Username="%s", PasswordDigest="%s", Nonce="%s", Created="%s"|,
+        username, digest, nonce, created)
     end
 
     def base64encoded_digest
@@ -33,6 +41,14 @@ module Wsse
 
     def base64encoded_nonce
       return [@nonce].pack("m").chomp
+    end
+
+    def format
+      return self.class.format_token_values(
+        self.username,
+        self.base64encoded_digest,
+        self.base64encoded_nonce,
+        self.created.utc.iso8601)
     end
 
     # TODO: self.format_token(username, digest, nonce, created) -> str
