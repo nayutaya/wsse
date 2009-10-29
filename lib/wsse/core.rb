@@ -1,6 +1,5 @@
 # coding: utf-8
 
 require "wsse/version"
-
-module Wsse
-end
+require "wsse/username_token"
+require "wsse/authenticator"
