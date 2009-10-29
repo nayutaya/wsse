@@ -19,7 +19,7 @@ module Wsse
     end
 
     def self.create_password_digest(password, nonce, created)
-      return Digest::SHA1.digest(nonce + created.iso8601 + password)
+      return Digest::SHA1.digest(nonce + created.utc.iso8601 + password)
     end
 
     def self.build(username, password, nonce, created)
@@ -27,11 +27,17 @@ module Wsse
       return self.new(username, digest, nonce, created)
     end
 
+    def base64encoded_digest
+      return [@digest].pack("m").chomp
+    end
+
+    def base64encoded_nonce
+      return [@nonce].pack("m").chomp
+    end
+
     # TODO: self.format_token(username, digest, nonce, created) -> str
     # TODO: self.parse(token) -> UsernameToken
     # TODO: self.parse_time(time) -> Time
-    # TODO: base64encoded_digest -> str
-    # TODO: base64encoded_nonce -> str
     # TODO: formatted_created -> str
     # TODO: create_token_params -> Hash
     # TODO: create_token -> Hash

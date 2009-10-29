@@ -29,8 +29,8 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
       Digest::SHA1.digest("nonce2000-01-01T00:00:00Zpassword"),
       @klass.create_password_digest("password", "nonce", Time.utc(2000, 1, 1)))
     assert_equal(
-      Digest::SHA1.digest("NONCE1999-12-31T23:59:59ZPASSWORD"),
-      @klass.create_password_digest("PASSWORD", "NONCE", Time.utc(1999, 12, 31, 23, 59, 59)))
+      Digest::SHA1.digest("bar1999-12-31T23:59:59Zfoo"),
+      @klass.create_password_digest("foo", "bar", Time.utc(1999, 12, 31, 23, 59, 59)))
   end
 
   def test_build
@@ -42,5 +42,15 @@ class WsseUsernameTokenTest < Test::Unit::TestCase
     assert_equal(digest,     token.digest)
     assert_equal("nonce",    token.nonce)
     assert_equal(created,    token.created)
+  end
+
+  def test_base64encoded_digest
+    token = @klass.new("username", "digest", "nonce", Time.utc(2000, 1, 1))
+    assert_equal("ZGlnZXN0", token.base64encoded_digest)
+  end
+
+  def test_base64encoded_nonce
+    token = @klass.new("username", "digest", "nonce", Time.utc(2000, 1, 1))
+    assert_equal("bm9uY2U=", token.base64encoded_nonce)
   end
 end
