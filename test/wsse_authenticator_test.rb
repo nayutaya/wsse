@@ -22,4 +22,11 @@ class WsseAuthenticatorTest < Test::Unit::TestCase
     token = Wsse::UsernameToken.build("username", "password")
     assert_equal(:wrong_password, @mod.authenticate(token, "username", "baz"))
   end
+
+  def test_authenticate_p
+    token = Wsse::UsernameToken.build("username", "password")
+    assert_equal(true,  @mod.authenticate?(token, "username", "password"))
+    assert_equal(false, @mod.authenticate?(token, "foo", "password"))
+    assert_equal(false, @mod.authenticate?(token, "username", "baz"))
+  end
 end

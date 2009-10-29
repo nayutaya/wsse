@@ -20,5 +20,9 @@ module Wsse
       return (token.digest == digest)
     end
     private_class_method :judge_password
+
+    def self.authenticate?(token, username, password)
+      return (self.authenticate(token, username, password) == :success)
+    end
   end
 end
